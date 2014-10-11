@@ -17,3 +17,28 @@
 	<string>
 	"ebnf_token.hpp"
 
+1412989852 source:c:\development\projects\llparsergenerator\main.cpp
+	<iostream>
+	<iterator>
+	<string>
+	"ebnf_token.hpp"
+	"ebnf_parser.hpp"
+	"ebnf_scanner.hpp"
+
+1412987015 c:\development\projects\llparsergenerator\ebnf_token.hpp
+	<iostream>
+	<string>
+	<utility>
+
+1412990609 c:\development\projects\llparsergenerator\ebnf_parser.hpp
+	<exception>
+	<utility>
+	"ebnf_token.hpp"
+	"ebnf_scanner.hpp"
+
+1412987015 c:\development\projects\llparsergenerator\ebnf_scanner.hpp
+	<cassert>
+	<cctype>
+	<string>
+	"ebnf_token.hpp"
+
