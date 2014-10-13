@@ -7,6 +7,13 @@
 #include "ebnf_token.hpp"
 #include "ebnf_scanner.hpp"
 
+/*
+    EBNF grammar parser
+
+    Utilizes ebnf_scanner class for lexical analysis.
+    Parses using LL(1) recursive descent for O(n) parsing time.
+*/
+
 template <typename InputIterator>
 class ebnf_parser
 {
