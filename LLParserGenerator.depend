@@ -17,7 +17,7 @@
 	<string>
 	"ebnf_token.hpp"
 
-1412989852 source:c:\development\projects\llparsergenerator\main.cpp
+1413261112 source:c:\development\projects\llparsergenerator\main.cpp
 	<iostream>
 	<iterator>
 	<string>
@@ -25,20 +25,31 @@
 	"ebnf_parser.hpp"
 	"ebnf_scanner.hpp"
 
-1412987015 c:\development\projects\llparsergenerator\ebnf_token.hpp
+1413223750 c:\development\projects\llparsergenerator\ebnf_token.hpp
 	<iostream>
 	<string>
 	<utility>
 
-1412990609 c:\development\projects\llparsergenerator\ebnf_parser.hpp
+1413262423 c:\development\projects\llparsergenerator\ebnf_parser.hpp
 	<exception>
+	<string>
+	<unordered_map>
 	<utility>
 	"ebnf_token.hpp"
 	"ebnf_scanner.hpp"
+	"grammar_tree.hpp"
 
-1412987015 c:\development\projects\llparsergenerator\ebnf_scanner.hpp
+1413223913 c:\development\projects\llparsergenerator\ebnf_scanner.hpp
 	<cassert>
 	<cctype>
 	<string>
 	"ebnf_token.hpp"
+
+1413261259 c:\development\projects\llparsergenerator\grammar_tree.hpp
+	<iostream>
+	<string>
+	<vector>
+	<boost/variant.hpp>
+	<boost/variant/recursive_wrapper.hpp>
+	<boost/container/vector.hpp>
 

@@ -1,9 +1,11 @@
 #ifndef GRAMMAR_TREE_HPP_INCLUDED
 #define GRAMMAR_TREE_HPP_INCLUDED
 
+#include <iostream>
 #include <string>
 #include <vector>
 #include <boost/variant.hpp>
+#include <boost/variant/recursive_wrapper.hpp>
 #include <boost/container/vector.hpp>
 
 /*
@@ -19,8 +21,9 @@ using grammar_tree = boost::variant<struct grammar_terminal,
                                     struct grammar_identifier,
                                     struct grammar_concat,
                                     struct grammar_alternates,
-                                    struct grammar_optional,
-                                    struct grammar_repeat>;
+                                    boost::recursive_wrapper<struct grammar_optional>,
+                                    boost::recursive_wrapper<struct grammar_repeat>>;
+
 // Node type for a terminal string in a grammar
 struct grammar_terminal
 {
@@ -71,5 +74,65 @@ struct grammar_repeat
 {
     grammar_tree child;
 };
+
+std::ostream& operator<<(std::ostream& os, const grammar_tree& t)
+{
+    struct printer : public boost::static_visitor<>
+    {
+        std::ostream& os;
+
+        void operator()(const grammar_terminal& n) const
+        {
+            os << "(Terminal \"" << n.value << "\")\n";
+        }
+        void operator()(const grammar_token& n) const
+        {
+            os << "(Token " << n.name << ")\n";
+        }
+        void operator()(const grammar_rule& n) const
+        {
+            os << "(Rule " << n.name << ")\n";
+        }
+        void operator()(const grammar_identifier& n) const
+        {
+            os << "(Identifier " << n.name << ")\n";
+        }
+        void operator()(const grammar_concat& n) const
+        {
+            os << "(\n";
+            for(auto& i : n.children)
+            {
+                boost::apply_visitor(printer(os), i);
+            }
+            os << ")\n";
+        }
+        void operator()(const grammar_alternates& n) const
+        {
+            os << "(Alternates\n";
+            for(auto& i : n.children)
+            {
+                boost::apply_visitor(printer(os), i);
+            }
+            os << ")\n";
+        }
+        void operator()(const grammar_optional& n) const
+        {
+            os << "(Optional\n";
+            boost::apply_visitor(printer(os), n.child);
+            os << ")\n";
+        }
+        void operator()(const grammar_repeat& n) const
+        {
+            os << "(Repeat\n";
+            boost::apply_visitor(printer(os), n.child);
+            os << ")\n";
+        }
+
+        printer(std::ostream& _os): os(_os) {}
+    } p(os);
+
+    boost::apply_visitor(p, t);
+    return os;
+}
 
 #endif // GRAMMAR_TREE_HPP_INCLUDED

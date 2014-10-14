@@ -2,10 +2,13 @@
 #define EBNF_PARSER_HPP_INCLUDED
 
 #include <exception>
+#include <string>
+#include <unordered_map>
 #include <utility>
 
 #include "ebnf_token.hpp"
 #include "ebnf_scanner.hpp"
+#include "grammar_tree.hpp"
 
 /*
     EBNF grammar parser
@@ -20,9 +23,13 @@ class ebnf_parser
 public:
     ebnf_parser(InputIterator first, InputIterator last): scanner(first, last), lookahead(std::move(scanner.lookahead())) {}
 
-    void run()
+    using grammar = std::unordered_map<std::string, grammar_tree>;
+
+    grammar run()
     {
-        parse_ebnf();
+        grammar g;
+        parse_ebnf(g);
+        return g;
     }
 
     class parse_error : public std::exception
@@ -43,16 +50,24 @@ protected:
         lookahead = std::move(scanner.lookahead());
     }
 
-    void parse_group()
+    grammar_tree parse_group()
     {
+        grammar_tree t;
+
         if(lookahead.type == ebnf_token::Identifier)
         {
+            t = grammar_identifier{lookahead.str};
+            advance();
+        }
+        else if(lookahead.type == ebnf_token::TermString)
+        {
+            t = grammar_terminal{lookahead.str};
             advance();
         }
         else if(lookahead.type == ebnf_token::OperatorLOpt)
         {
             advance();
-            parse_exp();
+            t = grammar_optional{parse_exp()};
             if(lookahead.type != ebnf_token::OperatorROpt)
                 throw parse_error();
             advance();
@@ -60,63 +75,86 @@ protected:
         else if(lookahead.type == ebnf_token::OperatorLParen)
         {
             advance();
-            parse_exp();
+            t = parse_exp();
             if(lookahead.type != ebnf_token::OperatorRParen)
+            {
+                std::cerr << lookahead.type << lookahead.str << std::endl;
                 throw parse_error();
+            }
             advance();
         }
         else if(lookahead.type == ebnf_token::OperatorLRep)
         {
             advance();
-            parse_exp();
+            t = grammar_repeat{parse_exp()};
             if(lookahead.type != ebnf_token::OperatorRRep)
                 throw parse_error();
             advance();
         }
+
+        return t;
     }
 
-    void parse_concat()
+    grammar_tree parse_unit()
     {
-        parse_group();
+        grammar_concat t;
+
+        t.children.push_back(parse_group());
         while(lookahead.type == ebnf_token::Identifier ||
+              lookahead.type == ebnf_token::TermString ||
               lookahead.type == ebnf_token::OperatorLOpt ||
               lookahead.type == ebnf_token::OperatorLParen ||
               lookahead.type == ebnf_token::OperatorLRep)
         {
-            parse_group();
+            t.children.push_back(parse_group());
         }
+
+        return t;
     }
 
-    void parse_exp()
+    grammar_tree parse_exp()
     {
-        parse_concat();
-        while(lookahead.type == ebnf_token::OperatorAlt)
+        grammar_tree t = parse_unit();
+
+        if(lookahead.type == ebnf_token::OperatorAlt)
         {
-            advance();
-            parse_concat();
+            grammar_alternates a;
+            a.children.push_back(std::move(t));
+
+            do
+            {
+                advance();
+                a.children.push_back(parse_unit());
+            } while(lookahead.type == ebnf_token::OperatorAlt);
+
+            t = std::move(a);
         }
+
+        return t;
     }
 
-    void parse_rule()
+    void parse_rule(grammar& g)
     {
+        std::string rule = std::move(lookahead.str);
+
         advance();
         if(lookahead.type != ebnf_token::OperatorDef)
             throw parse_error();
         advance();
-        parse_exp();
+
+        g[std::move(rule)] = parse_exp();
+
+        if(lookahead.type != ebnf_token::OperatorEnd)
+            throw parse_error();
     }
 
-    void parse_ebnf()
+    void parse_ebnf(grammar& g)
     {
-        if(lookahead.type == ebnf_token::Identifier)
+        while(lookahead.type == ebnf_token::Identifier)
         {
-            parse_rule();
-            if(lookahead.type != ebnf_token::OperatorEnd)
-                throw parse_error();
+            parse_rule(g);
             advance();
         }
-        else
-            throw parse_error();
     }
 };
 

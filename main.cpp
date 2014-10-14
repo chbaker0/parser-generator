@@ -21,5 +21,10 @@ int main()
     auto parser = make_ebnf_parser(istreambuf_iterator<char>(cin),
                                    istreambuf_iterator<char>());
 
-    parser.run();
+    auto ruleset = parser.run();
+
+    for(auto& i : ruleset)
+    {
+        cout << i.first << ":\n" << i.second << endl;
+    }
 }
