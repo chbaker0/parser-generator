@@ -10,14 +10,6 @@ int main()
 {
     using namespace std;
 
-//    auto scanner = make_ebnf_scanner(istreambuf_iterator<char>(cin),
-//                                     istreambuf_iterator<char>());
-//
-//    while(scanner.lookahead().type != ebnf_token::EOI)
-//    {
-//        cout << scanner.lookahead() << endl;
-//        scanner.advance();
-//    }
     auto parser = make_ebnf_parser(istreambuf_iterator<char>(cin),
                                    istreambuf_iterator<char>());
 

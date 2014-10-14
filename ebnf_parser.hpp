@@ -77,10 +77,7 @@ protected:
             advance();
             t = parse_exp();
             if(lookahead.type != ebnf_token::OperatorRParen)
-            {
-                std::cerr << lookahead.type << lookahead.str << std::endl;
                 throw parse_error();
-            }
             advance();
         }
         else if(lookahead.type == ebnf_token::OperatorLRep)
