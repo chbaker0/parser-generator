@@ -16,6 +16,7 @@
 
 // Typename alias for a tree node
 using grammar_tree = boost::variant<struct grammar_terminal,
+                                    struct grammar_empty,
                                     struct grammar_token,
                                     struct grammar_rule,
                                     struct grammar_identifier,
@@ -28,6 +29,11 @@ using grammar_tree = boost::variant<struct grammar_terminal,
 struct grammar_terminal
 {
     std::string value;
+};
+
+// Node type for terminal empty string
+struct grammar_empty
+{
 };
 
 // Node type for a token ID
@@ -84,6 +90,10 @@ std::ostream& operator<<(std::ostream& os, const grammar_tree& t)
         void operator()(const grammar_terminal& n) const
         {
             os << "(Terminal \"" << n.value << "\")\n";
+        }
+        void operator()(const grammar_empty& n) const
+        {
+            os << "(Empty)\n";
         }
         void operator()(const grammar_token& n) const
         {
