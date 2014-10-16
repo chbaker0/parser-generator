@@ -149,13 +149,27 @@ protected:
         auto rule_it = g.find(rule);
         if(rule_it != g.end())
         {
-            if(boost::get<grammar_alternates>(&t))
+            grammar_alternates *old = boost::get<grammar_alternates>(&rule_it->second);
+            grammar_alternates *new_alt = boost::get<grammar_alternates>(&t);
+
+            if(old)
             {
-                boost::get<grammar_alternates>(&t)->children.push_back(std::move(t));
+                if(new_alt)
+                    for(auto& i : new_alt->children)
+                        old->children.push_back(std::move(i));
+                else
+                    old->children.push_back(std::move(t));
             }
             else
             {
-                t->second = grammar_alternates{{std::move(rule_it->second), std::move(t)}};
+                grammar_alternates temp;
+                temp.children.push_back(std::move(rule_it->second));
+                if(new_alt)
+                    for(auto& i : new_alt->children)
+                        temp.children.push_back(std::move(i));
+                else
+                    temp.children.push_back(std::move(t));
+                rule_it->second = std::move(temp);
             }
         }
         else
