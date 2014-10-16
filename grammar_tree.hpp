@@ -106,65 +106,87 @@ std::ostream& operator<<(std::ostream& os, const grammar_tree& t)
 
         void operator()(const grammar_terminal& n) const
         {
+            for(unsigned int i = 0; i < tab; ++i) os << ' ';
             os << "(Terminal \"" << n.value << "\")\n";
         }
         void operator()(const grammar_empty& n) const
         {
+            for(unsigned int i = 0; i < tab; ++i) os << ' ';
             os << "(Empty)\n";
         }
         void operator()(const grammar_token& n) const
         {
+            for(unsigned int i = 0; i < tab; ++i) os << ' ';
             os << "(Token " << n.name << ")\n";
         }
         void operator()(const grammar_token_id& n) const
         {
+            for(unsigned int i = 0; i < tab; ++i) os << ' ';
             os << "(Token " << n.id << ")\n";
         }
         void operator()(const grammar_rule& n) const
         {
+            for(unsigned int i = 0; i < tab; ++i) os << ' ';
             os << "(Rule " << n.name << ")\n";
         }
         void operator()(const grammar_rule_id& n) const
         {
+            for(unsigned int i = 0; i < tab; ++i) os << ' ';
             os << "(Rule " << n.id << ")\n";
         }
         void operator()(const grammar_identifier& n) const
         {
+            for(unsigned int i = 0; i < tab; ++i) os << ' ';
             os << "(Identifier " << n.name << ")\n";
         }
         void operator()(const grammar_concat& n) const
         {
+            for(unsigned int i = 0; i < tab; ++i) os << ' ';
             os << "(\n";
             for(auto& i : n.children)
             {
-                boost::apply_visitor(printer(os), i);
+                boost::apply_visitor(printer(os, tab+1), i);
             }
             os << ")\n";
         }
         void operator()(const grammar_alternates& n) const
         {
+            for(unsigned int i = 0; i < tab; ++i) os << ' ';
             os << "(Alternates\n";
+
             for(auto& i : n.children)
             {
-                boost::apply_visitor(printer(os), i);
+                boost::apply_visitor(printer(os, tab+1), i);
             }
+
+            for(unsigned int i = 0; i < tab; ++i) os << ' ';
             os << ")\n";
         }
         void operator()(const grammar_optional& n) const
         {
+            for(unsigned int i = 0; i < tab; ++i) os << ' ';
             os << "(Optional\n";
-            boost::apply_visitor(printer(os), n.child);
+
+            boost::apply_visitor(printer(os, tab+1), n.child);
+
+            for(unsigned int i = 0; i < tab; ++i) os << ' ';
             os << ")\n";
         }
         void operator()(const grammar_repeat& n) const
         {
+            for(unsigned int i = 0; i < tab; ++i) os << ' ';
             os << "(Repeat\n";
-            boost::apply_visitor(printer(os), n.child);
+
+            boost::apply_visitor(printer(os, tab+1), n.child);
+
+            for(unsigned int i = 0; i < tab; ++i) os << ' ';
             os << ")\n";
         }
 
-        printer(std::ostream& _os): os(_os) {}
-    } p(os);
+        unsigned int tab;
+
+        printer(std::ostream& _os, unsigned int tab_in): os(_os), tab(tab_in) {}
+    } p(os, 0);
 
     boost::apply_visitor(p, t);
     return os;
