@@ -23,11 +23,9 @@ class ebnf_parser
 public:
     ebnf_parser(InputIterator first, InputIterator last): scanner(first, last), lookahead(std::move(scanner.lookahead())) {}
 
-    using grammar = std::unordered_map<std::string, grammar_tree>;
-
-    grammar run()
+    ruleset run()
     {
-        grammar g;
+        ruleset g;
         parse_ebnf(g);
         return g;
     }
@@ -135,7 +133,7 @@ protected:
         return t;
     }
 
-    void parse_rule(grammar& g)
+    void parse_rule(ruleset& g)
     {
         std::string rule = std::move(lookahead.str);
 
@@ -181,7 +179,7 @@ protected:
             throw parse_error();
     }
 
-    void parse_ebnf(grammar& g)
+    void parse_ebnf(ruleset& g)
     {
         while(lookahead.type == ebnf_token::Identifier)
         {

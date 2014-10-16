@@ -19,12 +19,16 @@
 using grammar_tree = boost::variant<struct grammar_terminal,
                                     struct grammar_empty,
                                     struct grammar_token,
+                                    struct grammar_token_id,
                                     struct grammar_rule,
+                                    struct grammar_rule_id,
                                     struct grammar_identifier,
                                     struct grammar_concat,
                                     struct grammar_alternates,
                                     boost::recursive_wrapper<struct grammar_optional>,
                                     boost::recursive_wrapper<struct grammar_repeat>>;
+
+using ruleset = std::unordered_map<std::string, grammar_tree>;
 
 // Node type for a terminal string in a grammar
 struct grammar_terminal
@@ -37,16 +41,28 @@ struct grammar_empty
 {
 };
 
-// Node type for a token ID
+// Node type for a token name
 struct grammar_token
 {
     std::string name;
+};
+
+// Node type for a token ID
+struct grammar_token_id
+{
+    std::size_t id;
 };
 
 // Node type for a rule name
 struct grammar_rule
 {
     std::string name;
+};
+
+// Node type for a rule ID
+struct grammar_rule_id
+{
+    std::size_t id;
 };
 
 // Node type for an unresolved identifier; meant to be an intermediate node
@@ -61,7 +77,6 @@ struct grammar_identifier
 // doesn't support incomplete types.
 struct grammar_concat
 {
-
     boost::container::deque<grammar_tree> children;
 };
 
@@ -101,9 +116,17 @@ std::ostream& operator<<(std::ostream& os, const grammar_tree& t)
         {
             os << "(Token " << n.name << ")\n";
         }
+        void operator()(const grammar_token_id& n) const
+        {
+            os << "(Token " << n.id << ")\n";
+        }
         void operator()(const grammar_rule& n) const
         {
             os << "(Rule " << n.name << ")\n";
+        }
+        void operator()(const grammar_rule_id& n) const
+        {
+            os << "(Rule " << n.id << ")\n";
         }
         void operator()(const grammar_identifier& n) const
         {
