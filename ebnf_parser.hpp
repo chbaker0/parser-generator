@@ -94,19 +94,24 @@ protected:
 
     grammar_tree parse_unit()
     {
-        grammar_concat t;
+        grammar_tree t = parse_group();
 
-        t.children.push_back(parse_group());
+        grammar_concat t_rest;
         while(lookahead.type == ebnf_token::Identifier ||
               lookahead.type == ebnf_token::TermString ||
               lookahead.type == ebnf_token::OperatorLOpt ||
               lookahead.type == ebnf_token::OperatorLParen ||
               lookahead.type == ebnf_token::OperatorLRep)
         {
-            t.children.push_back(parse_group());
+            t_rest.children.push_back(parse_group());
         }
-
-        return t;
+        if(t_rest.children.size())
+        {
+            t_rest.children.push_front(std::move(t));
+            return t_rest;
+        }
+        else
+            return t;
     }
 
     grammar_tree parse_exp()
@@ -139,7 +144,24 @@ protected:
             throw parse_error();
         advance();
 
-        g[std::move(rule)] = parse_exp();
+        grammar_tree t = parse_exp();
+
+        auto rule_it = g.find(rule);
+        if(rule_it != g.end())
+        {
+            if(boost::get<grammar_alternates>(&t))
+            {
+                boost::get<grammar_alternates>(&t)->children.push_back(std::move(t));
+            }
+            else
+            {
+                t->second = grammar_alternates{{std::move(rule_it->second), std::move(t)}};
+            }
+        }
+        else
+        {
+            g[std::move(rule)] = std::move(t);
+        }
 
         if(lookahead.type != ebnf_token::OperatorEnd)
             throw parse_error();

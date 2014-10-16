@@ -30,7 +30,7 @@
 	<string>
 	<utility>
 
-1413265502 c:\development\projects\llparsergenerator\ebnf_parser.hpp
+1413414496 c:\development\projects\llparsergenerator\ebnf_parser.hpp
 	<exception>
 	<string>
 	<unordered_map>
@@ -45,11 +45,12 @@
 	<string>
 	"ebnf_token.hpp"
 
-1413261259 c:\development\projects\llparsergenerator\grammar_tree.hpp
+1413320538 c:\development\projects\llparsergenerator\grammar_tree.hpp
 	<iostream>
 	<string>
 	<vector>
 	<boost/variant.hpp>
 	<boost/variant/recursive_wrapper.hpp>
 	<boost/container/vector.hpp>
+	<boost/container/deque.hpp>
 

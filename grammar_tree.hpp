@@ -7,6 +7,7 @@
 #include <boost/variant.hpp>
 #include <boost/variant/recursive_wrapper.hpp>
 #include <boost/container/vector.hpp>
+#include <boost/container/deque.hpp>
 
 /*
     Extensible tree for representing a formal grammar.
@@ -56,17 +57,18 @@ struct grammar_identifier
 };
 
 // Node type for series of symbols
-// Using Boost.Container vector since std::vector
+// Using Boost.Container deque since std::deque
 // doesn't support incomplete types.
 struct grammar_concat
 {
-    boost::container::vector<grammar_tree> children;
+
+    boost::container::deque<grammar_tree> children;
 };
 
 // Node type for group of possible symbols to satisfy a rule
 struct grammar_alternates
 {
-    boost::container::vector<grammar_tree> children;
+    boost::container::deque<grammar_tree> children;
 };
 
 // Node type for an optional symbol
