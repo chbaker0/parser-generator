@@ -26,5 +26,6 @@ struct processed_ruleset
 
 ruleset merge_trees(std::vector<std::pair<std::string, grammar_tree>> trees, ruleset::iterator& start);
 processed_ruleset resolve_identifiers(ruleset in);
+processed_ruleset factor_inner_alternates(processed_ruleset in);
 
 #endif // GRAMMAR_ANALYSIS_HPP_INCLUDED

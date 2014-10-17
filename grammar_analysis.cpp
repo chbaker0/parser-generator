@@ -107,3 +107,10 @@ processed_ruleset resolve_identifiers(ruleset in)
 
     return result;
 }
+
+processed_ruleset factor_inner_alternates(processed_ruleset in)
+{
+    processed_ruleset result;
+
+
+}
