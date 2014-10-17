@@ -34,6 +34,7 @@
 		<Unit filename="ebnf_parser.hpp" />
 		<Unit filename="ebnf_scanner.hpp" />
 		<Unit filename="ebnf_token.hpp" />
+		<Unit filename="grammar_analysis.cpp" />
 		<Unit filename="grammar_analysis.hpp" />
 		<Unit filename="grammar_tree.hpp" />
 		<Unit filename="main.cpp" />
