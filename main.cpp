@@ -14,7 +14,15 @@ int main()
     auto parser = make_ebnf_parser(istreambuf_iterator<char>(cin),
                                    istreambuf_iterator<char>());
 
-    auto ruleset = parser.run();
+    auto rule_list = parser.run();
+
+    for(auto& i : rule_list)
+    {
+        cout << i.first << ":\n" << i.second << endl;
+    }
+
+    ruleset::iterator start;
+    auto ruleset = merge_trees(std::move(rule_list), start);
 
     for(auto& i : ruleset)
     {

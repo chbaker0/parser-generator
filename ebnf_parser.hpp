@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 #include "ebnf_token.hpp"
 #include "ebnf_scanner.hpp"
@@ -23,9 +24,9 @@ class ebnf_parser
 public:
     ebnf_parser(InputIterator first, InputIterator last): scanner(first, last), lookahead(std::move(scanner.lookahead())) {}
 
-    ruleset run()
+    std::vector<std::pair<std::string, grammar_tree>> run()
     {
-        ruleset g;
+        std::vector<std::pair<std::string, grammar_tree>> g;
         parse_ebnf(g);
         return g;
     }
@@ -133,7 +134,7 @@ protected:
         return t;
     }
 
-    void parse_rule(ruleset& g)
+    void parse_rule(std::vector<std::pair<std::string, grammar_tree>>& g)
     {
         std::string rule = std::move(lookahead.str);
 
@@ -142,44 +143,44 @@ protected:
             throw parse_error();
         advance();
 
-        grammar_tree t = parse_exp();
+        g.emplace_back(std::move(rule), parse_exp());
 
-        auto rule_it = g.find(rule);
-        if(rule_it != g.end())
-        {
-            grammar_alternates *old = boost::get<grammar_alternates>(&rule_it->second);
-            grammar_alternates *new_alt = boost::get<grammar_alternates>(&t);
-
-            if(old)
-            {
-                if(new_alt)
-                    for(auto& i : new_alt->children)
-                        old->children.push_back(std::move(i));
-                else
-                    old->children.push_back(std::move(t));
-            }
-            else
-            {
-                grammar_alternates temp;
-                temp.children.push_back(std::move(rule_it->second));
-                if(new_alt)
-                    for(auto& i : new_alt->children)
-                        temp.children.push_back(std::move(i));
-                else
-                    temp.children.push_back(std::move(t));
-                rule_it->second = std::move(temp);
-            }
-        }
-        else
-        {
-            g[std::move(rule)] = std::move(t);
-        }
+//        auto rule_it = g.find(rule);
+//        if(rule_it != g.end())
+//        {
+//            grammar_alternates *old = boost::get<grammar_alternates>(&rule_it->second);
+//            grammar_alternates *new_alt = boost::get<grammar_alternates>(&t);
+//
+//            if(old)
+//            {
+//                if(new_alt)
+//                    for(auto& i : new_alt->children)
+//                        old->children.push_back(std::move(i));
+//                else
+//                    old->children.push_back(std::move(t));
+//            }
+//            else
+//            {
+//                grammar_alternates temp;
+//                temp.children.push_back(std::move(rule_it->second));
+//                if(new_alt)
+//                    for(auto& i : new_alt->children)
+//                        temp.children.push_back(std::move(i));
+//                else
+//                    temp.children.push_back(std::move(t));
+//                rule_it->second = std::move(temp);
+//            }
+//        }
+//        else
+//        {
+//            g[std::move(rule)] = std::move(t);
+//        }
 
         if(lookahead.type != ebnf_token::OperatorEnd)
             throw parse_error();
     }
 
-    void parse_ebnf(ruleset& g)
+    void parse_ebnf(std::vector<std::pair<std::string, grammar_tree>>& g)
     {
         while(lookahead.type == ebnf_token::Identifier)
         {

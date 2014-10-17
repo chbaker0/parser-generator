@@ -98,7 +98,7 @@ struct grammar_repeat
     grammar_tree child;
 };
 
-std::ostream& operator<<(std::ostream& os, const grammar_tree& t)
+inline std::ostream& operator<<(std::ostream& os, const grammar_tree& t)
 {
     struct printer : public boost::static_visitor<>
     {

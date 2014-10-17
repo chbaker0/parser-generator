@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1413434506 source:d:\development\projects\llparsergenerator\main.cpp
+1413518099 source:d:\development\projects\llparsergenerator\main.cpp
 	<iostream>
 	<iterator>
 	<string>
@@ -56,16 +56,17 @@
 	<boost/container/vector.hpp>
 	<boost/container/deque.hpp>
 
-1413434506 d:\development\projects\llparsergenerator\ebnf_parser.hpp
+1413518005 d:\development\projects\llparsergenerator\ebnf_parser.hpp
 	<exception>
 	<string>
 	<unordered_map>
 	<utility>
+	<vector>
 	"ebnf_token.hpp"
 	"ebnf_scanner.hpp"
 	"grammar_tree.hpp"
 
-1413434929 d:\development\projects\llparsergenerator\grammar_tree.hpp
+1413518259 d:\development\projects\llparsergenerator\grammar_tree.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -74,10 +75,13 @@
 	<boost/container/vector.hpp>
 	<boost/container/deque.hpp>
 
-1413433757 d:\development\projects\llparsergenerator\grammar_analysis.hpp
+1413518224 d:\development\projects\llparsergenerator\grammar_analysis.hpp
 	<string>
 	<unordered_map>
 	<utility>
 	<vector>
 	"grammar_tree.hpp"
+
+1413518187 source:d:\development\projects\llparsergenerator\grammar_analysis.cpp
+	"grammar_analysis.hpp"
 
