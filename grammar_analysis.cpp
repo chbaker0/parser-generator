@@ -108,9 +108,25 @@ processed_ruleset resolve_identifiers(ruleset in)
     return result;
 }
 
+struct factor_alternates_visitor : boost::static_visitor<>
+{
+
+};
+
 processed_ruleset factor_inner_alternates(processed_ruleset in)
 {
     processed_ruleset result;
 
+    for(rule& r : in.rules)
+    {
+        grammar_alternates *alt = boost::get<grammar_alternates>(&r.t);
+        if(alt)
+        {
 
+        }
+        else
+        {
+
+        }
+    }
 }
