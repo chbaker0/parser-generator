@@ -40,4 +40,13 @@ int main()
     {
         cout << i << ":\n" << processed.rules[i].t << endl;
     }
+
+    factor_inner_alternates(processed);
+
+    cout << "Factored alternates:\n\n";
+
+    for(size_t i = 0; i < processed.rules.size(); ++i)
+    {
+        cout << i << ":" << (processed.rules[i].is_generated ? " Generated\n" : "\n") << processed.rules[i].t << endl;
+    }
 }

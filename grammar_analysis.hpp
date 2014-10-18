@@ -1,6 +1,7 @@
 #ifndef GRAMMAR_ANALYSIS_HPP_INCLUDED
 #define GRAMMAR_ANALYSIS_HPP_INCLUDED
 
+#include <deque>
 #include <string>
 #include <unordered_map>
 #include <utility>
@@ -20,12 +21,12 @@ struct rule
 
 struct processed_ruleset
 {
-    std::vector<rule> rules;
+    std::deque<rule> rules;
     std::unordered_map<std::string, std::size_t> id_table;
 };
 
 ruleset merge_trees(std::vector<std::pair<std::string, grammar_tree>> trees, ruleset::iterator& start);
 processed_ruleset resolve_identifiers(ruleset in);
-processed_ruleset factor_inner_alternates(processed_ruleset in);
+void factor_inner_alternates(processed_ruleset& in);
 
 #endif // GRAMMAR_ANALYSIS_HPP_INCLUDED

@@ -87,7 +87,6 @@ struct resolve_name_visitor : boost::static_visitor<>
     resolve_name_visitor(grammar_tree& variant_node_in, const std::unordered_map<std::string, std::size_t>& id_table_in): variant_node(variant_node_in), id_table(id_table_in) {}
 };
 
-
 processed_ruleset resolve_identifiers(ruleset in)
 {
     processed_ruleset result;
@@ -96,7 +95,6 @@ processed_ruleset resolve_identifiers(ruleset in)
     for(auto& i : in)
         result.id_table[i.first] = cur++;
 
-    result.rules.reserve(cur);
     for(auto& i : in)
         result.rules.push_back(std::move(i.second));
 
@@ -110,23 +108,47 @@ processed_ruleset resolve_identifiers(ruleset in)
 
 struct factor_alternates_visitor : boost::static_visitor<>
 {
+    template <typename Dummy>
+    void operator()(Dummy&) const
+    {
 
+    }
+    void operator()(grammar_alternates& alt) const
+    {
+        std::size_t new_id = grammar.rules.size();
+        grammar.rules.emplace_back(std::move(alt), true);
+        alt.children.push_back(grammar_rule_id{new_id});
+        variant_node = grammar_rule_id{new_id};
+    }
+    void operator()(grammar_concat& concat) const
+    {
+        for(grammar_tree& t : concat.children)
+            boost::apply_visitor(factor_alternates_visitor(t, grammar), t);
+    }
+    void operator()(grammar_optional& opt) const
+    {
+        boost::apply_visitor(factor_alternates_visitor(opt.child, grammar), opt.child);
+    }
+    void operator()(grammar_repeat& rep) const
+    {
+        boost::apply_visitor(factor_alternates_visitor(rep.child, grammar), rep.child);
+    }
+
+    grammar_tree& variant_node;
+    processed_ruleset& grammar;
+
+    factor_alternates_visitor(grammar_tree& p, processed_ruleset& g): variant_node(p), grammar(g) {}
 };
 
-processed_ruleset factor_inner_alternates(processed_ruleset in)
+void factor_inner_alternates(processed_ruleset& in)
 {
-    processed_ruleset result;
-
-    for(rule& r : in.rules)
+    for(std::size_t i = 0; i < in.rules.size(); ++i)
     {
-        grammar_alternates *alt = boost::get<grammar_alternates>(&r.t);
+        grammar_alternates *alt = boost::get<grammar_alternates>(&in.rules[i].t);
         if(alt)
-        {
-
-        }
+            for(grammar_tree& t : alt->children)
+                boost::apply_visitor(factor_alternates_visitor(t, in), t);
         else
-        {
-
-        }
+            boost::apply_visitor(factor_alternates_visitor(in.rules[i].t, in), in.rules[i].t);
     }
 }

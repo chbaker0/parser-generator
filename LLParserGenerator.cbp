@@ -30,6 +30,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=c++11" />
 		</Compiler>
 		<Unit filename="ebnf_parser.hpp" />
 		<Unit filename="ebnf_scanner.hpp" />
