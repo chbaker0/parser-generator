@@ -31,14 +31,15 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-std=c++11" />
+			<Add directory="include" />
 		</Compiler>
-		<Unit filename="ebnf_parser.hpp" />
-		<Unit filename="ebnf_scanner.hpp" />
-		<Unit filename="ebnf_token.hpp" />
-		<Unit filename="grammar_analysis.cpp" />
-		<Unit filename="grammar_analysis.hpp" />
-		<Unit filename="grammar_tree.hpp" />
-		<Unit filename="main.cpp" />
+		<Unit filename="include/ebnf_parser.hpp" />
+		<Unit filename="include/ebnf_scanner.hpp" />
+		<Unit filename="include/ebnf_token.hpp" />
+		<Unit filename="include/grammar_analysis.hpp" />
+		<Unit filename="include/grammar_tree.hpp" />
+		<Unit filename="src/grammar_analysis.cpp" />
+		<Unit filename="src/main.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
